@@ -1,0 +1,19 @@
+<div class="app-container">
+  <app-header *ngIf="isAuthenticated"></app-header>
+  
+  <div class="main-content">
+    <mat-sidenav-container class="sidenav-container">
+      <mat-sidenav mode="side" [opened]="isAuthenticated" class="app-sidenav">
+        <app-sidenav *ngIf="isAuthenticated"></app-sidenav>
+      </mat-sidenav>
+      
+      <mat-sidenav-content [class.authenticated]="isAuthenticated">
+        <div class="content-area">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+  
+  <app-footer></app-footer>
+</div> 

@@ -1,0 +1,46 @@
+<mat-toolbar color="primary">
+  <div class="logo" routerLink="/dashboard">
+    <mat-icon>psychology</mat-icon>
+    <span>MindMate</span>
+  </div>
+  
+  <div class="spacer"></div>
+  
+  <!-- Only show navigation when authenticated -->
+  <ng-container *ngIf="isAuthenticated$ | async">
+    <!-- Desktop Navigation Links -->
+    <div class="nav-links">
+      <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a class="nav-item" routerLink="/journal/list" routerLinkActive="active">Journal</a>
+      <a class="nav-item" routerLink="/journal/new" routerLinkActive="active">New Entry</a>
+    </div>
+    
+    <div class="user-info" *ngIf="username$ | async as username">
+      Welcome, {{ username }}
+    </div>
+    
+    <button mat-icon-button [routerLink]="['/profile']" aria-label="User profile">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    
+    <button mat-icon-button (click)="logout()" aria-label="Logout">
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+    
+    <!-- Mobile Menu Button -->
+    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()" aria-label="Menu">
+      <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+  </ng-container>
+</mat-toolbar>
+
+<!-- Mobile Navigation Menu - Only show when authenticated -->
+<div class="mobile-menu" [class.open]="isMobileMenuOpen" *ngIf="isAuthenticated$ | async">
+  <div class="mobile-nav">
+    <a class="mobile-nav-item" routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">Dashboard</a>
+    <a class="mobile-nav-item" routerLink="/journal/list" routerLinkActive="active" (click)="closeMobileMenu()">Journal</a>
+    <a class="mobile-nav-item" routerLink="/journal/new" routerLinkActive="active" (click)="closeMobileMenu()">New Entry</a>
+    <a class="mobile-nav-item" routerLink="/profile" routerLinkActive="active" (click)="closeMobileMenu()">Profile</a>
+    <a class="mobile-nav-item" (click)="logout(); closeMobileMenu()">Logout</a>
+  </div>
+</div> 

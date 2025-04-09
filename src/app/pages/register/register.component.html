@@ -1,0 +1,64 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <div class="auth-header">
+        <mat-icon class="auth-icon">psychology</mat-icon>
+        <h1>MindMate</h1>
+      </div>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <h2>Register</h2>
+      
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" autocomplete="username">
+          <mat-error *ngIf="registerForm.controls['username'].hasError('required')">
+            Username is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.controls['username'].hasError('minlength')">
+            Username must be at least 4 characters
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="password" autocomplete="new-password">
+          <mat-error *ngIf="registerForm.controls['password'].hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="registerForm.controls['password'].hasError('minlength')">
+            Password must be at least 6 characters
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field class="full-width">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput formControlName="confirmPassword" type="password" autocomplete="new-password">
+          <mat-error *ngIf="registerForm.controls['confirmPassword'].hasError('required')">
+            Please confirm your password
+          </mat-error>
+          <mat-error *ngIf="registerForm.controls['confirmPassword'].hasError('matching')">
+            Passwords do not match
+          </mat-error>
+        </mat-form-field>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid || isLoading">
+            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+            <span *ngIf="!isLoading">Register</span>
+          </button>
+        </div>
+      </form>
+      
+      <div class="auth-footer">
+        <p>Already have an account? <a routerLink="/login">Login</a></p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

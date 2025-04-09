@@ -1,0 +1,109 @@
+<div class="journal-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Edit Journal Entry' : 'New Journal Entry' }}</h1>
+    <button mat-raised-button color="primary" [routerLink]="['/journal/list']" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      <span class="button-text">Back to Entries</span>
+    </button>
+  </div>
+  
+  <form [formGroup]="journalForm" (ngSubmit)="onSubmit()">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>edit</mat-icon>
+        <mat-card-title>{{ isEditMode ? 'Update your thoughts and feelings' : 'Share your thoughts and feelings' }}</mat-card-title>
+        <mat-card-subtitle>{{ currentDate | date:'medium' }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div *ngIf="moodSentimentMismatch" class="consistency-warning">
+          <mat-icon>warning</mat-icon>
+          <span>The sentiment detected in your text seems inconsistent with your selected mood rating.</span>
+        </div>
+        
+        <div class="form-fields">
+          <mat-form-field appearance="outline" class="text-area-field">
+            <mat-label>Journal Entry</mat-label>
+            <textarea 
+              matInput 
+              formControlName="entryText" 
+              placeholder="What's on your mind today?" 
+              rows="10"
+              #entryTextArea
+              (input)="updateCharCount(entryTextArea.value)">
+            </textarea>
+            <mat-hint align="start">Characters: {{ charCount }}/2000</mat-hint>
+            <mat-hint align="end" [ngClass]="{'warning-text': moodSentimentMismatch}">{{ sentiment }}</mat-hint>
+            <mat-error *ngIf="journalForm.get('entryText')?.hasError('required')">
+              Journal entry text is required
+            </mat-error>
+            <mat-error *ngIf="journalForm.get('entryText')?.hasError('maxlength')">
+              Entry cannot exceed 2000 characters
+            </mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="mood-field">
+            <mat-label>Mood Rating</mat-label>
+            <mat-select formControlName="moodRating">
+              <mat-option [value]="1">
+                <span class="mood-option">
+                  <mat-icon class="mood-1-icon">sentiment_very_dissatisfied</mat-icon>
+                  1 - Very Bad
+                </span>
+              </mat-option>
+              <mat-option [value]="2">
+                <span class="mood-option">
+                  <mat-icon class="mood-2-icon">sentiment_dissatisfied</mat-icon>
+                  2 - Bad
+                </span>
+              </mat-option>
+              <mat-option [value]="3">
+                <span class="mood-option">
+                  <mat-icon class="mood-3-icon">sentiment_neutral</mat-icon>
+                  3 - Neutral
+                </span>
+              </mat-option>
+              <mat-option [value]="4">
+                <span class="mood-option">
+                  <mat-icon class="mood-4-icon">sentiment_satisfied</mat-icon>
+                  4 - Good
+                </span>
+              </mat-option>
+              <mat-option [value]="5">
+                <span class="mood-option">
+                  <mat-icon class="mood-5-icon">sentiment_very_satisfied</mat-icon>
+                  5 - Very Good
+                </span>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="journalForm.get('moodRating')?.hasError('required')">
+              Mood rating is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          [disabled]="journalForm.invalid || isSubmitting">
+          <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          {{ isEditMode ? 'Update Entry' : 'Save Entry' }}
+          <mat-spinner *ngIf="isSubmitting" diameter="20" class="button-spinner"></mat-spinner>
+        </button>
+        
+        <button 
+          mat-button 
+          type="button" 
+          color="warn" 
+          (click)="resetForm()"
+          [disabled]="isSubmitting">
+          <mat-icon>refresh</mat-icon>
+          Reset
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</div> 

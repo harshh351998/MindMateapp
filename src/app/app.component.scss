@@ -1,0 +1,61 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+}
+
+.sidenav-container {
+  flex: 1;
+  min-height: calc(100vh - 128px); /* Adjust based on header and footer height */
+}
+
+.app-sidenav {
+  width: 250px;
+}
+
+.content-area {
+  padding: 16px;
+  min-height: calc(100vh - 160px); /* Adjust based on header, footer and padding */
+}
+
+mat-sidenav-content {
+  background-color: #f5f5f5;
+}
+
+mat-sidenav-content.authenticated {
+  margin-left: 250px; /* Same as sidenav width */
+}
+
+.content-wrapper {
+  flex: 1;
+  padding-top: 64px; /* Account for fixed header */
+}
+
+@media (max-width: 768px) {
+  .app-sidenav {
+    width: 200px;
+  }
+  
+  mat-sidenav-content.authenticated {
+    margin-left: 200px;
+  }
+
+  .content-wrapper {
+    padding-top: 56px; /* Smaller header on mobile */
+  }
+}
+
+@media (max-width: 600px) {
+  mat-sidenav {
+    width: 0;
+  }
+  
+  mat-sidenav-content.authenticated {
+    margin-left: 0;
+  }
+} 

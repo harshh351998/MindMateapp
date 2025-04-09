@@ -1,0 +1,156 @@
+<div class="journal-container">
+  <section class="page-header">
+    <div class="header-content">
+      <h1>Your Journal Entries</h1>
+      <p class="subtitle">Track your thoughts and mood over time</p>
+    </div>
+    <div class="header-actions">
+      <button mat-mini-fab color="accent" (click)="refreshEntries()" aria-label="Refresh entries" title="Refresh entries">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-raised-button color="accent" [routerLink]="['/journal/new']">
+        <mat-icon>add</mat-icon>
+        New Entry
+      </button>
+    </div>
+  </section>
+
+  <section class="search-container">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Search entries</mat-label>
+      <input matInput [(ngModel)]="searchText" placeholder="Search by text content" (keyup)="applyFilters()">
+      <button *ngIf="searchText" mat-icon-button matSuffix (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-icon *ngIf="!searchText" matSuffix>search</mat-icon>
+    </mat-form-field>
+    
+    <div class="filter-row">
+      <mat-form-field appearance="outline" class="filter-item">
+        <mat-label>Date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate [(ngModel)]="startDate" placeholder="Start date" (dateChange)="applyFilters()">
+          <input matEndDate [(ngModel)]="endDate" placeholder="End date" (dateChange)="applyFilters()">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="filter-item">
+        <mat-label>Mood rating</mat-label>
+        <mat-select [(ngModel)]="selectedMood" (selectionChange)="applyFilters()">
+          <mat-option [value]="0">All moods</mat-option>
+          <mat-option [value]="1">
+            <span class="mood-option">
+              <mat-icon>sentiment_very_dissatisfied</mat-icon> Very Negative (1/5)
+            </span>
+          </mat-option>
+          <mat-option [value]="2">
+            <span class="mood-option">
+              <mat-icon>sentiment_dissatisfied</mat-icon> Negative (2/5)
+            </span>
+          </mat-option>
+          <mat-option [value]="3">
+            <span class="mood-option">
+              <mat-icon>sentiment_neutral</mat-icon> Neutral (3/5)
+            </span>
+          </mat-option>
+          <mat-option [value]="4">
+            <span class="mood-option">
+              <mat-icon>sentiment_satisfied</mat-icon> Positive (4/5)
+            </span>
+          </mat-option>
+          <mat-option [value]="5">
+            <span class="mood-option">
+              <mat-icon>sentiment_very_satisfied</mat-icon> Very Positive (5/5)
+            </span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="filter-item">
+        <mat-label>Sentiment</mat-label>
+        <mat-select [(ngModel)]="selectedSentiment" (selectionChange)="applyFilters()">
+          <mat-option [value]="''">All sentiments</mat-option>
+          <mat-option value="positive">
+            <span class="mood-option">
+              <mat-icon>sentiment_very_satisfied</mat-icon> Positive
+            </span>
+          </mat-option>
+          <mat-option value="neutral">
+            <span class="mood-option">
+              <mat-icon>sentiment_neutral</mat-icon> Neutral
+            </span>
+          </mat-option>
+          <mat-option value="negative">
+            <span class="mood-option">
+              <mat-icon>sentiment_very_dissatisfied</mat-icon> Negative
+            </span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <button mat-stroked-button color="warn" class="reset-button" (click)="resetFilters()" [disabled]="!hasActiveFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Clear Filters
+      </button>
+    </div>
+  </section>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner color="accent" diameter="50"></mat-spinner>
+    <p>Loading your journal entries...</p>
+  </div>
+
+  <div *ngIf="!loading && filteredEntries.length === 0" class="no-entries">
+    <mat-icon class="no-entries-icon">auto_stories</mat-icon>
+    <h2>No entries found</h2>
+    <p *ngIf="hasActiveFilters()">Try adjusting your filters or search terms</p>
+    <p *ngIf="!hasActiveFilters() && entryCount === 0">You haven't created any journal entries yet</p>
+    <button mat-raised-button color="primary" *ngIf="!hasActiveFilters() && entryCount === 0" [routerLink]="['/journal/new']">
+      Create Your First Entry
+    </button>
+    <button mat-stroked-button color="primary" *ngIf="hasActiveFilters()" (click)="resetFilters()">
+      Reset Filters
+    </button>
+  </div>
+
+  <div *ngIf="!loading && filteredEntries.length > 0" class="entries-container">
+    <div *ngFor="let entry of filteredEntries" class="entry-card">
+      <div class="entry-card-inner">
+        <div class="entry-header">
+          <div class="entry-date">{{ entry.dateCreated | date:'medium' }}</div>
+          <div class="mood-sentiment">
+            <div class="mood-badge" [ngClass]="'mood-' + entry.moodRating">
+              <mat-icon>{{ getMoodIcon(entry.moodRating) }}</mat-icon>
+              <span>Mood: {{ entry.moodRating }}/5</span>
+            </div>
+            <div class="mood-badge" [ngClass]="'sentiment-' + getSentimentClass(entry)">
+              <mat-icon>{{ getSentimentIcon(entry) }}</mat-icon>
+              <span>{{ getSentimentText(entry) }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="entry-content">
+          <p class="entry-text">{{ truncateText(entry.entryText, 150) }}</p>
+        </div>
+        
+        <div class="entry-actions">
+          <button mat-button color="primary" [routerLink]="['/journal', entry.id]">
+            <mat-icon>visibility</mat-icon>
+            Read
+          </button>
+          <button mat-button color="accent" [routerLink]="['/journal', entry.id, 'edit']">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+          <button mat-button color="warn" (click)="deleteEntry(entry)">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

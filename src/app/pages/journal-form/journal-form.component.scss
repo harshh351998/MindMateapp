@@ -1,0 +1,134 @@
+.journal-form-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+h1 {
+  margin-bottom: 0;
+  color: #3f51b5;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.form-card {
+  margin-bottom: 32px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.text-area-field {
+  width: 100%;
+}
+
+.mood-field {
+  width: 100%;
+  max-width: 300px;
+}
+
+.mood-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mood-1-icon { color: #c62828; }
+.mood-2-icon { color: #ff8f00; }
+.mood-3-icon { color: #0277bd; }
+.mood-4-icon { color: #2e7d32; }
+.mood-5-icon { color: #2e7d32; }
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+mat-card-actions {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+}
+
+.button-spinner {
+  margin-left: 8px;
+}
+
+.consistency-warning {
+  display: flex;
+  align-items: center;
+  background-color: #fff3e0;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-left: 4px solid #ff9800;
+}
+
+.consistency-warning mat-icon {
+  color: #ff9800;
+  margin-right: 8px;
+}
+
+.warning-text {
+  color: #ff9800 !important;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  h1 {
+    font-size: 24px;
+    width: 100%;
+  }
+  
+  .back-button {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .journal-form-container {
+    padding: 16px 12px;
+  }
+  
+  .button-text {
+    display: none;
+  }
+  
+  textarea {
+    min-height: 150px;
+  }
+  
+  mat-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+} 

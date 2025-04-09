@@ -1,0 +1,76 @@
+<div class="journal-detail-container">
+  <div class="journal-header">
+    <h1>Journal Entry</h1>
+    <div>
+      <button mat-raised-button color="primary" [routerLink]="['/journal/list']">
+        <mat-icon>list</mat-icon>
+        Back to Entries
+      </button>
+    </div>
+  </div>
+  
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  
+  <!-- Not Found Message -->
+  <div *ngIf="!isLoading && !entry" class="not-found">
+    <mat-icon>error_outline</mat-icon>
+    <h2>Entry Not Found</h2>
+    <p>The journal entry you're looking for doesn't exist or you don't have permission to view it.</p>
+    <button mat-raised-button color="primary" [routerLink]="['/journal/list']">
+      Return to Journal List
+    </button>
+  </div>
+  
+  <!-- Entry Details -->
+  <ng-container *ngIf="!isLoading && entry">
+    <mat-card class="entry-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar [ngClass]="getSentimentClass(entry.sentiment)">
+          {{ getSentimentIcon(entry.sentiment) }}
+        </mat-icon>
+        <mat-card-title>Journal Entry from {{ entry.dateCreated | date:'medium' }}</mat-card-title>
+        <mat-card-subtitle>
+          <div class="mood-container">
+            <span>Mood Rating: </span>
+            <div class="mood-rating">
+              <span *ngFor="let star of [1, 2, 3, 4, 5]"
+                    [ngClass]="{'filled': star <= entry.moodRating, 'empty': star > entry.moodRating}">
+                <mat-icon>{{ star <= entry.moodRating ? 'star' : 'star_border' }}</mat-icon>
+              </span>
+            </div>
+          </div>
+          <div class="sentiment-label">
+            Sentiment Analysis: <span [ngClass]="getSentimentClass(entry.sentiment)">{{ getSentimentLabel(entry.sentiment) }}</span>
+          </div>
+          
+          <!-- Display tags if available -->
+          <div *ngIf="entry.tags && entry.tags.length > 0" class="tags-container">
+            <span>Tags: </span>
+            <span *ngFor="let tag of entry.tags" class="entry-tag">{{ tag }}</span>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <mat-divider></mat-divider>
+        <div class="entry-text">
+          <p>{{ entry.entryText }}</p>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-button color="accent" [routerLink]="['/journal', entry.id, 'edit']">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-button color="warn" (click)="confirmDelete()">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-container>
+</div> 

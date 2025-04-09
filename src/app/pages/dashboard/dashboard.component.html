@@ -1,0 +1,401 @@
+<div class="dashboard-container">
+  <section class="dashboard-header">
+    <div class="header-content">
+      <h1>Welcome to Your Mind Journal</h1>
+      <p class="subtitle">Track your mood, analyze your thoughts, and discover patterns in your daily entries</p>
+    </div>
+    <div class="action-buttons">
+      <button mat-mini-fab color="accent" (click)="refreshDashboard(true)" aria-label="Refresh dashboard" title="Refresh data">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-raised-button color="accent" [routerLink]="['/journal/new']">
+        <mat-icon>add</mat-icon>
+        <span class="button-text">New Entry</span>
+      </button>
+    </div>
+  </section>
+  
+  <div class="dashboard-grid">
+    <section class="stats-section">
+      <mat-card class="stats-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>insert_chart</mat-icon>
+          <mat-card-title>Your Journal Stats</mat-card-title>
+          <mat-card-subtitle>Summary of your journaling activity</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="isLoading" class="stats-content">
+            <div class="stats-row">
+              <div class="stat-item">
+                <div class="stat-label skeleton skeleton-text-sm"></div>
+                <div class="skeleton skeleton-stat"></div>
+              </div>
+              
+              <div class="stat-item">
+                <div class="stat-label skeleton skeleton-text-sm"></div>
+                <div class="skeleton skeleton-stat"></div>
+              </div>
+            </div>
+            
+            <mat-divider></mat-divider>
+            
+            <div class="stat-item">
+              <div class="stat-label skeleton skeleton-text-sm"></div>
+              <div class="sentiment-breakdown">
+                <div class="sentiment-items-container">
+                  <div class="skeleton-sentiment-item">
+                    <span class="skeleton skeleton-circle"></span>
+                    <span class="skeleton skeleton-item"></span>
+                  </div>
+                  <div class="skeleton-sentiment-item">
+                    <span class="skeleton skeleton-circle"></span>
+                    <span class="skeleton skeleton-item"></span>
+                  </div>
+                  <div class="skeleton-sentiment-item">
+                    <span class="skeleton skeleton-circle"></span>
+                    <span class="skeleton skeleton-item"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="!isLoading" class="stats-content">
+            <div class="stats-row">
+              <div class="stat-item">
+                <div class="stat-label">Total Entries</div>
+                <div class="stats-value">{{ totalEntries || 0 }}</div>
+              </div>
+              
+              <div class="stat-item">
+                <div class="stat-label">Average Mood</div>
+                <div class="stats-value">
+                  <div [ngClass]="getAverageMoodClass()">
+                    <mat-icon>{{ getMoodIcon(Math.round(averageMood)) }}</mat-icon>
+                    <span>{{ averageMood | number:'1.1-1' }}/5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <mat-divider></mat-divider>
+            
+            <div class="stat-item">
+              <div class="stat-label">Sentiment Breakdown</div>
+              <div class="sentiment-breakdown">
+                <div class="sentiment-items-container">
+                  <div class="sentiment-item">
+                    <span class="emoji-icon emoji-sentiment-positive">
+                      <mat-icon>sentiment_very_satisfied</mat-icon>
+                    </span>
+                    <span>Positive: {{ positiveCount }}</span>
+                  </div>
+                  <div class="sentiment-item">
+                    <span class="emoji-icon emoji-sentiment-neutral">
+                      <mat-icon>sentiment_neutral</mat-icon>
+                    </span>
+                    <span>Neutral: {{ neutralCount }}</span>
+                  </div>
+                  <div class="sentiment-item">
+                    <span class="emoji-icon emoji-sentiment-negative">
+                      <mat-icon>sentiment_very_dissatisfied</mat-icon>
+                    </span>
+                    <span>Negative: {{ negativeCount }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="action-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>flash_on</mat-icon>
+          <mat-card-title>Quick Actions</mat-card-title>
+          <mat-card-subtitle>Shortcuts to common tasks</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="quick-actions">
+            <button mat-raised-button color="primary" [routerLink]="['/journal/new']">
+              <mat-icon>add</mat-icon>
+              <span class="button-text">New Entry</span>
+            </button>
+            
+            <button mat-raised-button color="accent" [routerLink]="['/journal/list']">
+              <mat-icon>auto_stories</mat-icon>
+              <span class="button-text">View All Entries</span>
+            </button>
+            
+            <button mat-raised-button color="basic" [routerLink]="['/profile']">
+              <mat-icon>person</mat-icon>
+              <span class="button-text">Profile</span>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+    
+    <section class="visualization-section">
+      <!-- Mood Trend Chart Skeleton -->
+      <mat-card *ngIf="isLoading" class="chart-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>timeline</mat-icon>
+          <mat-card-title>Your Mood Trends</mat-card-title>
+          <mat-card-subtitle>Loading chart data...</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="skeleton skeleton-chart"></div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Mood Trend Chart -->
+      <mat-card *ngIf="!isLoading && totalEntries > 1" class="chart-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>timeline</mat-icon>
+          <mat-card-title>Your Mood Trends</mat-card-title>
+          <mat-card-subtitle>See how your mood has changed over time</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+              [data]="moodChartData"
+              [options]="moodChartOptions"
+              [type]="'line'">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Placeholder when not enough entries -->
+      <mat-card *ngIf="!isLoading && totalEntries <= 1" class="chart-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>timeline</mat-icon>
+          <mat-card-title>Your Mood Trends</mat-card-title>
+          <mat-card-subtitle>Need more entries to display trends</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="no-data-message">
+            <p>Add at least two journal entries to see your mood trends over time.</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Calendar Skeleton -->
+      <mat-card *ngIf="isLoading" class="calendar-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>calendar_month</mat-icon>
+          <mat-card-title>Journal Activity</mat-card-title>
+          <mat-card-subtitle>Loading calendar...</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="skeleton skeleton-calendar"></div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Entry Calendar -->
+      <mat-card *ngIf="!isLoading && totalEntries > 0" class="calendar-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>calendar_month</mat-icon>
+          <mat-card-title>Journal Activity</mat-card-title>
+          <mat-card-subtitle>Mood tracking calendar</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="calendar-container">
+            <div class="calendar-header">
+              <div class="day-label">S</div>
+              <div class="day-label">M</div>
+              <div class="day-label">T</div>
+              <div class="day-label">W</div>
+              <div class="day-label">T</div>
+              <div class="day-label">F</div>
+              <div class="day-label">S</div>
+            </div>
+            <div class="calendar-grid">
+              <div *ngFor="let day of calendarDays" 
+                   class="calendar-day" 
+                   [ngClass]="[
+                     'day-mood-' + day.moodLevel,
+                     day.isCurrentMonth ? 'current-month' : '',
+                     isToday(day.date) ? 'today' : ''
+                   ]"
+                   [title]="day.tooltip">
+                {{ day.date.getDate() }}
+              </div>
+            </div>
+          </div>
+          <div class="calendar-legend">
+            <div class="legend-item">
+              <div class="legend-color day-mood-0"></div>
+              <div class="legend-label">No entry</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color day-mood-1"></div>
+              <div class="legend-label">Low</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color day-mood-3"></div>
+              <div class="legend-label">Neutral</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color day-mood-5"></div>
+              <div class="legend-label">High</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Placeholder when no entries -->
+      <mat-card *ngIf="!isLoading && totalEntries === 0" class="calendar-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>calendar_month</mat-icon>
+          <mat-card-title>Journal Activity</mat-card-title>
+          <mat-card-subtitle>Start tracking your moods</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="no-data-message">
+            <p>Create your first entry to begin seeing your mood patterns on this calendar.</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Word Analysis Skeleton -->
+      <mat-card *ngIf="isLoading" class="word-analysis-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>psychology</mat-icon>
+          <mat-card-title>Word Analysis</mat-card-title>
+          <mat-card-subtitle>Loading word analysis...</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="skeleton-cloud">
+            <div class="skeleton skeleton-word"></div>
+            <div class="skeleton skeleton-word"></div>
+            <div class="skeleton skeleton-word"></div>
+            <div class="skeleton skeleton-word"></div>
+            <div class="skeleton skeleton-word"></div>
+            <div class="skeleton skeleton-word"></div>
+            <div class="skeleton skeleton-word"></div>
+            <div class="skeleton skeleton-word"></div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Word Analysis -->
+      <mat-card *ngIf="!isLoading && commonWords.length > 0" class="word-analysis-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>psychology</mat-icon>
+          <mat-card-title>Word Analysis</mat-card-title>
+          <mat-card-subtitle>Most common words in your journal entries</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="word-cloud">
+            <div *ngFor="let word of commonWords; let i = index" 
+                  class="word-item"
+                  [style.font-size.px]="14 + (word.count * 2)"
+                  [style.--i]="i">
+              {{ word.text }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Placeholder when not enough words -->
+      <mat-card *ngIf="!isLoading && totalEntries > 0 && commonWords.length === 0" class="word-analysis-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>psychology</mat-icon>
+          <mat-card-title>Word Analysis</mat-card-title>
+          <mat-card-subtitle>Waiting for more content</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="no-words-message">
+            Add more detailed journal entries to see your commonly used words appear here.
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
+  
+  <section class="entries-section">
+    <h2 class="section-title">Recent Journal Entries</h2>
+      
+    <!-- Entries Loading Skeleton -->
+    <div *ngIf="isLoading" class="entries-grid">
+      <mat-card class="entry-card" *ngFor="let i of [1, 2, 3]">
+        <mat-card-header>
+          <div class="skeleton skeleton-circle" style="width: 40px; height: 40px;"></div>
+          <mat-card-title>
+            <div class="skeleton skeleton-text"></div>
+          </mat-card-title>
+          <mat-card-subtitle>
+            <div class="skeleton skeleton-text-sm"></div>
+            <div class="skeleton-row">
+              <div class="skeleton skeleton-text-sm" style="width: 60px;"></div>
+              <div class="skeleton skeleton-text-sm" style="width: 50px;"></div>
+              <div class="skeleton skeleton-text-sm" style="width: 70px;"></div>
+            </div>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text"></div>
+        </mat-card-content>
+        <mat-card-actions>
+          <div class="skeleton-row">
+            <div class="skeleton" style="height: 32px; width: 70px;"></div>
+            <div class="skeleton" style="height: 32px; width: 70px;"></div>
+          </div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    
+    <div *ngIf="!isLoading && recentEntries.length === 0" class="no-entries">
+      <p>You haven't created any journal entries yet.</p>
+      <button mat-raised-button color="primary" [routerLink]="['/journal/new']">
+        Create Your First Entry
+      </button>
+    </div>
+    
+    <div class="entries-grid" *ngIf="!isLoading && recentEntries.length > 0">
+      <mat-card *ngFor="let entry of recentEntries" class="entry-card">
+        <mat-card-header>
+          <div class="emoji-icon" [ngClass]="getSentimentClass(entry)" mat-card-avatar>
+            <mat-icon>{{ getSentimentIcon(entry) }}</mat-icon>
+          </div>
+          <mat-card-title>
+            <div class="entry-date">{{ entry.dateCreated | date:'medium' }}</div>
+          </mat-card-title>
+          <mat-card-subtitle>
+            <div class="mood-badge" [ngClass]="'mood-' + entry.moodRating">
+              <mat-icon>{{ getMoodIcon(entry.moodRating) }}</mat-icon>
+              <span>Mood: {{ entry.moodRating }}/5</span>
+            </div>
+            <div class="tags-container" *ngIf="entry.tags && entry.tags.length > 0">
+              <span *ngFor="let tag of entry.tags" class="entry-tag">{{ tag }}</span>
+            </div>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="entry-text">{{ truncateText(entry.entryText, 150) }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary" [routerLink]="['/journal', entry.id]">
+            <mat-icon>visibility</mat-icon>
+            Read
+          </button>
+          <button mat-button color="accent" [routerLink]="['/journal', entry.id, 'edit']">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    
+    <div class="view-all-link" *ngIf="!isLoading && recentEntries.length > 0">
+      <button mat-stroked-button color="primary" [routerLink]="['/journal/list']">
+        <mat-icon>view_list</mat-icon>
+        View All Journal Entries
+      </button>
+    </div>
+  </section>
+</div> 
