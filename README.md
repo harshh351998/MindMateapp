@@ -1,4 +1,4 @@
-# MindMate Frontend
+# MindMate 
 
 This is the Angular-based frontend for the MindMate application, designed to work with the C# (.NET) backend.
 
