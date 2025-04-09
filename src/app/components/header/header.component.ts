@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,18 +8,38 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styles: [`
+    :host {
+      display: block;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    ::ng-deep .mat-toolbar {
+      background-color: #3f51b5 !important;
+      color: white !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 0 16px;
+    }
+    
     .logo {
       display: flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
       user-select: none;
+      transition: opacity 0.2s;
+    }
+    
+    .logo:hover {
+      opacity: 0.9;
     }
     
     .logo mat-icon {
-      font-size: 24px;
-      height: 24px;
-      width: 24px;
+      font-size: 28px;
+      height: 28px;
+      width: 28px;
+      color: white;
     }
     
     .logo span {
@@ -64,6 +84,13 @@ import { AuthService } from '../../services/auth.service';
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 160px;
+      color: white;
+      opacity: 0.9;
+    }
+    
+    .sidenav-toggle {
+      margin-right: 12px;
+      display: none;
     }
     
     .mobile-menu-button {
@@ -72,10 +99,10 @@ import { AuthService } from '../../services/auth.service';
     
     .mobile-menu {
       position: fixed;
-      top: 64px;
+      top: 56px;
       left: 0;
       right: 0;
-      background-color: #4154b0;
+      background-color: var(--primary-dark);
       display: none;
       flex-direction: column;
       align-items: stretch;
@@ -99,7 +126,7 @@ import { AuthService } from '../../services/auth.service';
     .mobile-nav-item {
       padding: 16px;
       display: block;
-      color: white;
+      color: var(--text-light);
       text-decoration: none;
       font-weight: 500;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -110,12 +137,21 @@ import { AuthService } from '../../services/auth.service';
       background-color: rgba(255, 255, 255, 0.1);
     }
     
+    /* Custom styles for toolbar buttons */
+    ::ng-deep .mat-mdc-icon-button {
+      color: white !important;
+    }
+    
+    ::ng-deep .mat-mdc-icon-button:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
     @media (max-width: 768px) {
       .nav-links, .user-info {
         display: none;
       }
       
-      .mobile-menu-button {
+      .sidenav-toggle {
         display: block;
       }
       
@@ -126,13 +162,19 @@ import { AuthService } from '../../services/auth.service';
       .logo span {
         font-size: 18px;
       }
+      
+      ::ng-deep .mat-toolbar {
+        height: 56px !important;
+      }
     }
   `]
 })
 export class HeaderComponent implements OnInit {
   isAuthenticated$: Observable<boolean>;
   username$: Observable<string | null>;
-  isMobileMenuOpen = false;
+  
+  @Input() isMobile = false;
+  @Output() toggleSidenav = new EventEmitter<void>();
   
   constructor(private authService: AuthService, private router: Router) {
     this.isAuthenticated$ = this.authService.currentUser$.pipe(
@@ -144,15 +186,12 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
   }
   
-  toggleMobileMenu(): void {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
-  }
-  
-  closeMobileMenu(): void {
-    this.isMobileMenuOpen = false;
+  onToggleSidenav(): void {
+    this.toggleSidenav.emit();
   }
   
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 } 

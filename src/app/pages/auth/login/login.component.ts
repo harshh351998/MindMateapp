@@ -96,18 +96,18 @@ import { AuthService } from '../../../services/auth.service';
     :host {
       display: block;
       width: 100%;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .login-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      min-height: calc(100vh - 60px); /* Adjusted to account for footer */
       width: 100%;
       margin: 0;
-      padding: 0;
+      padding: 40px 0;
       background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
       position: relative;
       overflow-y: auto;
@@ -116,7 +116,8 @@ import { AuthService } from '../../../services/auth.service';
     .login-content {
       width: 100%;
       max-width: 400px;
-      margin: 20px;
+      margin: 0 20px;
+      padding-bottom: 40px; /* Added spacing at the bottom */
       animation: fadeInUp 0.5s ease-out;
     }
     
@@ -173,65 +174,65 @@ import { AuthService } from '../../../services/auth.service';
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       padding: 24px;
       margin: 0;
-      
-      mat-card-header {
-        margin-bottom: 24px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        
-        mat-card-title {
-          font-size: 24px;
-          margin-bottom: 8px;
-          color: #333;
-        }
-        
-        mat-card-subtitle {
-          font-size: 16px;
-          opacity: 0.8;
-          margin: 0;
-        }
-      }
+    }
+    
+    .login-card mat-card-header {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .login-card mat-card-title {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .login-card mat-card-subtitle {
+      font-size: 16px;
+      opacity: 0.8;
+      margin: 0;
     }
     
     .full-width {
       width: 100%;
       margin-bottom: 16px;
-      
-      .mat-mdc-form-field-subscript-wrapper {
-        padding: 0;
-      }
-      
-      mat-icon {
-        margin-right: 8px;
-        color: rgba(0, 0, 0, 0.6);
-      }
+    }
+    
+    .mat-mdc-form-field-subscript-wrapper {
+      padding: 0;
+    }
+    
+    .full-width mat-icon {
+      margin-right: 8px;
+      color: rgba(0, 0, 0, 0.6);
+    }
 
-      input {
-        padding: 8px 0;
-      }
+    .full-width input {
+      padding: 8px 0;
     }
     
     .form-actions {
       display: flex;
       justify-content: center;
       margin-top: 24px;
-      
-      .submit-button {
-        width: 100%;
-        padding: 8px;
-        font-size: 16px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        height: 48px;
-        border-radius: 24px;
-        
-        mat-spinner {
-          display: inline-block;
-          margin-right: 8px;
-        }
-      }
+    }
+    
+    .submit-button {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      height: 48px;
+      border-radius: 24px;
+    }
+    
+    .submit-button mat-spinner {
+      display: inline-block;
+      margin-right: 8px;
     }
     
     .error-message {
@@ -242,39 +243,45 @@ import { AuthService } from '../../../services/auth.service';
       padding: 12px;
       border-radius: 8px;
       background: rgba(244, 67, 54, 0.1);
-      
-      mat-icon {
-        margin-right: 8px;
-        font-size: 20px;
-      }
+    }
+    
+    .error-message mat-icon {
+      margin-right: 8px;
+      font-size: 20px;
     }
     
     .login-actions {
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-wrap: wrap;
       margin-top: 24px;
-      padding: 0;
-      border-top: 1px solid rgba(0, 0, 0, 0.08);
       padding-top: 20px;
-      
-      span {
-        margin-right: 8px;
-        color: rgba(0, 0, 0, 0.6);
-      }
-      
-      a {
-        font-weight: 500;
-      }
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      gap: 8px;
+    }
+    
+    .login-actions span {
+      margin-right: 4px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+    
+    .login-actions a {
+      font-weight: 500;
+      font-size: 14px;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
     
     @media (max-width: 480px) {
       .login-container {
-        padding: 0;
+        padding: 20px 0;
+        min-height: calc(100vh - 80px);
       }
       
       .login-content {
-        margin: 16px;
+        margin: 0 16px;
+        padding-bottom: 20px;
       }
       
       .app-logo {
@@ -290,21 +297,31 @@ import { AuthService } from '../../../services/auth.service';
       .login-card {
         padding: 20px;
         border-radius: 8px;
-        
-        mat-card-header {
-          margin-bottom: 20px;
-          
-          mat-card-title {
-            font-size: 20px;
-          }
-          
-          mat-card-subtitle {
-            font-size: 14px;
-          }
-        }
+      }
+      
+      .login-card mat-card-header {
+        margin-bottom: 20px;
+      }
+      
+      .login-card mat-card-title {
+        font-size: 20px;
+      }
+      
+      .login-card mat-card-subtitle {
+        font-size: 14px;
+      }
+      
+      .login-actions {
+        flex-direction: column;
+        padding: 16px 0 8px;
+      }
+      
+      .login-actions span {
+        margin-right: 0;
+        margin-bottom: 8px;
       }
     }
-
+    
     /* Fix for Material form field appearance */
     ::ng-deep {
       .mat-mdc-form-field-flex {
@@ -317,6 +334,18 @@ import { AuthService } from '../../../services/auth.service';
 
       .mat-mdc-form-field-focus-overlay {
         background-color: transparent !important;
+      }
+      
+      .mat-mdc-button {
+        padding: 0 16px !important;
+        height: 36px !important;
+        line-height: 36px !important;
+      }
+      
+      .mat-mdc-card-header-text {
+        margin: 0 !important;
+        text-align: center !important;
+        width: 100% !important;
       }
     }
   `]

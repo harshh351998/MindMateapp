@@ -57,14 +57,13 @@ export class AuthService {
 
   // Register user
   register(userData: {username: string, password: string}): Observable<any> {
-    // Mock registration
+    // Mock registration - don't log in the user automatically
     return of({
       id: '2',
       username: userData.username,
-      token: 'mock-jwt-token-for-new-user'
-    }).pipe(
-      tap(response => this.handleAuthResponse(response))
-    );
+      success: true,
+      message: 'Registration successful'
+    });
   }
 
   // Process authentication response

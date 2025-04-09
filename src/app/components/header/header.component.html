@@ -1,5 +1,10 @@
 <mat-toolbar color="primary">
-  <div class="logo" routerLink="/dashboard">
+  <!-- Sidenav toggle button - only visible when authenticated -->
+  <button mat-icon-button class="sidenav-toggle" *ngIf="isAuthenticated$ | async" (click)="onToggleSidenav()" aria-label="Toggle navigation menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  
+  <div class="logo" [routerLink]="(isAuthenticated$ | async) ? '/dashboard' : '/auth/login'">
     <mat-icon>psychology</mat-icon>
     <span>MindMate</span>
   </div>
@@ -26,21 +31,11 @@
     <button mat-icon-button (click)="logout()" aria-label="Logout">
       <mat-icon>exit_to_app</mat-icon>
     </button>
-    
-    <!-- Mobile Menu Button -->
-    <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()" aria-label="Menu">
-      <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
-    </button>
   </ng-container>
-</mat-toolbar>
-
-<!-- Mobile Navigation Menu - Only show when authenticated -->
-<div class="mobile-menu" [class.open]="isMobileMenuOpen" *ngIf="isAuthenticated$ | async">
-  <div class="mobile-nav">
-    <a class="mobile-nav-item" routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">Dashboard</a>
-    <a class="mobile-nav-item" routerLink="/journal/list" routerLinkActive="active" (click)="closeMobileMenu()">Journal</a>
-    <a class="mobile-nav-item" routerLink="/journal/new" routerLinkActive="active" (click)="closeMobileMenu()">New Entry</a>
-    <a class="mobile-nav-item" routerLink="/profile" routerLinkActive="active" (click)="closeMobileMenu()">Profile</a>
-    <a class="mobile-nav-item" (click)="logout(); closeMobileMenu()">Logout</a>
-  </div>
-</div> 
+  
+  <!-- Login/Register buttons when not authenticated -->
+  <ng-container *ngIf="(isAuthenticated$ | async) === false">
+    <a mat-button routerLink="/auth/login" routerLinkActive="active">Login</a>
+    <a mat-button routerLink="/auth/register" routerLinkActive="active">Register</a>
+  </ng-container>
+</mat-toolbar> 

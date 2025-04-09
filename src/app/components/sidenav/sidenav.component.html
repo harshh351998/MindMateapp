@@ -1,11 +1,21 @@
 <div class="sidenav">
+  <div class="user-profile">
+    <div class="avatar">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <div class="user-info">
+      <div class="username">{{username || 'User'}}</div>
+      <div class="user-role">Member</div>
+    </div>
+  </div>
+  
   <mat-nav-list>
     <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
       <mat-icon matListItemIcon>dashboard</mat-icon>
       <span>Dashboard</span>
     </a>
     
-    <a mat-list-item routerLink="/journal" routerLinkActive="active-link" 
+    <a mat-list-item routerLink="/journal/list" routerLinkActive="active-link" 
        [routerLinkActiveOptions]="{exact: true}">
       <mat-icon matListItemIcon>auto_stories</mat-icon>
       <span>Journal Entries</span>
@@ -21,6 +31,11 @@
     <a mat-list-item routerLink="/profile" routerLinkActive="active-link">
       <mat-icon matListItemIcon>person</mat-icon>
       <span>Profile</span>
+    </a>
+    
+    <a mat-list-item (click)="logout()" class="logout-item">
+      <mat-icon matListItemIcon>exit_to_app</mat-icon>
+      <span>Logout</span>
     </a>
   </mat-nav-list>
 </div> 

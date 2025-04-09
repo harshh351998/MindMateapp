@@ -21,6 +21,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core'; 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatListModule } from '@angular/material/list';
 import { NgChartsModule } from 'ng2-charts';
 
 import { AppComponent } from './app.component';
@@ -78,6 +80,8 @@ import { errorInterceptor } from './interceptors/error.interceptor';
     MatNativeDateModule,
     MatProgressSpinnerModule,
     MatDividerModule,
+    MatExpansionModule,
+    MatListModule,
     NgChartsModule,
     // App modules
     CoreModule,
