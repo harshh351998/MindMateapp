@@ -1,6 +1,6 @@
 [build]
   publish = "dist/mindmate-frontend"
-  command = "ng build --configuration production"
+  command = "mkdir -p dist/mindmate-frontend/assets && cp src/assets/env.js dist/mindmate-frontend/assets/env.js && cp _redirects dist/mindmate-frontend/_redirects && ng build --configuration production"
 
 # Environment variable processing during build
   [build.environment]

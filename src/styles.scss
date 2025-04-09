@@ -17,6 +17,26 @@ body {
   overflow-x: hidden;
 }
 
+/* Authentication Styles - Fix for register/login links */
+.login-actions, .register-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 16px !important;
+  padding: 16px 0 !important;
+}
+
+.login-actions a, .register-actions a {
+  font-weight: 500 !important;
+  margin-left: 8px !important;
+  color: #3f51b5 !important;
+  text-decoration: none !important;
+}
+
+.login-actions span, .register-actions span {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
 /* Responsive font sizes */
 html {
   font-size: 16px;
