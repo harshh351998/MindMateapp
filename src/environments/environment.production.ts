@@ -1,4 +1,8 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',  // Assuming API is served from the same domain in production
+  // These will be replaced at build time with the actual environment variables
+  // Access Netlify environment variables through the window._env_ object, 
+  // which will be populated through a build plugin
+  url: '/.netlify/functions/api',
+  apiUrl: '/.netlify/functions/api'
 }; 

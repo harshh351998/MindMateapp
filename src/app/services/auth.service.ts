@@ -15,7 +15,7 @@ import {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/api/auth`;
+  private apiUrl = `${environment.url || environment.apiUrl}/api/auth`;
   private tokenKey = 'auth_token';
   private userIdKey = 'user_id';
   private usernameKey = 'username';

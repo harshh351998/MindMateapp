@@ -9,7 +9,7 @@ import { JournalEntry, JournalRequestDto, JournalEntryUpdateDto, SentimentType }
   providedIn: 'root'
 })
 export class JournalService {
-  private apiUrl = `${environment.apiUrl}/api/journalentries`;
+  private apiUrl = `${environment.url || environment.apiUrl}/api/journalentries`;
   private useLocalMockData = true; // Always use mock data
   
   // Add subject to notify components when journal entries change
@@ -401,7 +401,7 @@ export class JournalService {
     if (this.useLocalMockData) {
       const filteredEntries = this.mockEntries.filter(entry => 
         entry.entryText.toLowerCase().includes(searchLower) ||
-        entry.tags.some(tag => tag.toLowerCase().includes(searchLower))
+        entry.tags?.some(tag => tag.toLowerCase().includes(searchLower))
       );
       
       this.logDebug(`Found ${filteredEntries.length} entries matching search: ${searchText}`);
@@ -412,7 +412,7 @@ export class JournalService {
     return this.getAllJournalEntries().pipe(
       map(entries => entries.filter(entry => 
         entry.entryText.toLowerCase().includes(searchLower) ||
-        entry.tags.some(tag => tag.toLowerCase().includes(searchLower))
+        entry.tags?.some(tag => tag.toLowerCase().includes(searchLower))
       ))
     );
   }
